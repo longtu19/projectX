@@ -1,41 +1,60 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  TouchableWithoutFeedback,
-} from "react-native";
+import React, {PureComponent} from 'react';import {RNCamera} from 'react-native-camera';
+import Icon from 'react-native-vector-icons/dist/FontAwesome';import {TouchableOpacity, Alert, StyleSheet} from 'react-native';
+export default class Camera extends PureComponent {
+  constructor(props) {
+    super(props);
+      this.state = {takingPic: false,};
+  }
 
-export default function Camera() {
-  return (
-    <View style={styles.container}>
-      <Text>CAMERA PAGE</Text>
-      <Pressable>
-        <Text style={styles.text}>Capture</Text>
-      </Pressable>
-      <StatusBar style="auto" />
-    </View>
-  );
+  takePicture = async () => {
+    if (this.camera && !this.state.takingPic) {
+
+      let options = {
+        quality: 0.85,
+        fixOrientation: true,
+        forceUpOrientation: true,
+      };
+
+      this.setState({takingPic: true});
+
+      try {
+         const data = await this.camera.takePictureAsync(options);
+         Alert.alert('Success', JSON.stringify(data));
+      } catch (err) {
+        Alert.alert('Error', 'Failed to take picture: ' + (err.message || err));
+        return;
+      } finally {
+        this.setState({takingPic: false});
+      }
+    }
+  };
+  render() {
+    return (
+      <RNCamera 
+        ref = {ref => {this.camera = ref}}
+        captureAudio={false}
+        style={{flex: 1}}
+        type={RNCamera.Constants.Type.back}
+        androidCameraPermissionOptions={{
+          title: 'Permission to use camera',
+          message: 'We need your permission to use your camera',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }} ></RNCamera>
+    )
+    //     activeOpacity=0.5
+    //     style= styles.btnAlignment
+    //     onPress=this.takePicture>
+    //     <icon name="camera" size="{50}" color="#fff"></icon>
+    // );
+  }
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    fontSize: 30,
-    lineHeight: 50,
-    fontWeight: "bold",
-    letterSpacing: 0.2,
-    color: "white",
-    backgroundColor: "black",
-    padding: 12,
-    borderRadius: 20,
-    overflow: "hidden",
-    top: 250,
-  },
+   btnAlignment: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
 });
