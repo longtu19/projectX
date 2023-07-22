@@ -7,46 +7,58 @@ import {
   Pressable,
   TouchableWithoutFeedback,
   FlatList,
+  Alert,
 } from "react-native";
 import items from "./data.js";
 import { Avatar, Button, Card } from "react-native-paper";
 
-
-
-
-
-
-
 export default function ResultPage() {
-  const [clickViewSellers, setClickViewSellers] = useState(false);
+
+  const [itemsSelected, setItemsSelected] = useState({})
+
+  const handlePressSellers = (itemId) => {
+
+    setItemsSelected(prevItems => ({
+      ...prevItems,
+      [itemId]: !prevItems[itemId]
+    }))
+    
+  };
 
 
   const renderItem = ({ item }) => (
-  
-  <Card style={styles.item_card}>
-     
-      <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
-      <Card.Actions>
-      <Button>Sellers</Button>
-   
-    </Card.Actions>
-  </Card>
-);
+    <View>
+      <Card style={styles.item_card}>
+        <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+        <Card.Actions>
+          <Button onPress={() => handlePressSellers(item.id)}>
+            Sellers
+          </Button>
+        </Card.Actions>
+        <Card.Content>
+
+         {itemsSelected[item.id] && item.sellers.map(seller => {
+          return (
+            <Text>{seller}</Text>
+          )
+         })}
+        </Card.Content>
+      </Card>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>History</Text>
-      <View style = {{height: 660, top: 100}}>
-      <FlatList
-        
-        data = {items}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-      />
-
-
+      <View style={{ height: 660, top: 100 }}>
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          
+        />
       </View>
-      
+
       <StatusBar style="auto" />
     </View>
   );
@@ -59,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: 30,
+    fontSize: 20,
     lineHeight: 40,
     fontWeight: "bold",
     letterSpacing: 0.2,
@@ -68,7 +80,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 20,
     overflow: "hidden",
-    top: 200,
   },
   title: {
     fontSize: 50,
@@ -82,16 +93,15 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     top: 100,
     right: 90,
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   item_card: {
-    top: 120,
+    top: 20,
     width: 320,
     marginBottom: 30,
-  
   },
   list: {
     height: 100,
-    overflow: "hidden"
-  }
+    overflow: "hidden",
+  },
 });
