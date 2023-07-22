@@ -38,8 +38,13 @@ export default function ResultPage() {
         <Card.Content>
 
          {itemsSelected[item.id] && item.sellers.map(seller => {
+
+          
           return (
-            <Text>{seller}</Text>
+           
+            <Text style = {styles.sellers_list}>{seller.name + " " +  seller.price}</Text>
+          
+            
           )
          })}
         </Card.Content>
@@ -100,8 +105,10 @@ const styles = StyleSheet.create({
     width: 320,
     marginBottom: 30,
   },
-  list: {
-    height: 100,
-    overflow: "hidden",
-  },
+  sellers_list: {
+    marginBottom: 4,
+    fontSize: 20,
+    borderColor: "black"
+
+  }
 });
