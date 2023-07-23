@@ -13,40 +13,31 @@ import items from "./data.js";
 import { Avatar, Button, Card } from "react-native-paper";
 
 export default function ResultPage() {
-
-  const [itemsSelected, setItemsSelected] = useState({})
+  const [itemsSelected, setItemsSelected] = useState({});
 
   const handlePressSellers = (itemId) => {
-
-    setItemsSelected(prevItems => ({
+    setItemsSelected((prevItems) => ({
       ...prevItems,
-      [itemId]: !prevItems[itemId]
-    }))
-    
+      [itemId]: !prevItems[itemId],
+    }));
   };
-
 
   const renderItem = ({ item }) => (
     <View>
       <Card style={styles.item_card}>
         <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
         <Card.Actions>
-          <Button onPress={() => handlePressSellers(item.id)}>
-            Sellers
-          </Button>
+          <Button onPress={() => handlePressSellers(item.id)}>Sellers</Button>
         </Card.Actions>
         <Card.Content>
-
-         {itemsSelected[item.id] && item.sellers.map(seller => {
-
-          
-          return (
-           
-            <Text style = {styles.sellers_list}>{seller.name + " " +  seller.price}</Text>
-          
-            
-          )
-         })}
+          {itemsSelected[item.id] &&
+            item.sellers.map((seller) => {
+              return (
+                <Text style={styles.sellers_list}>
+                  {seller.name + " " + seller.price}
+                </Text>
+              );
+            })}
         </Card.Content>
       </Card>
     </View>
@@ -60,7 +51,6 @@ export default function ResultPage() {
           data={items}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
-          
         />
       </View>
 
@@ -108,7 +98,6 @@ const styles = StyleSheet.create({
   sellers_list: {
     marginBottom: 4,
     fontSize: 20,
-    borderColor: "black"
-
-  }
+    borderColor: "black",
+  },
 });
