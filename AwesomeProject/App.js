@@ -7,11 +7,12 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Camera from "./source/cameraPage";
+import ResultPage from "./source/History/resultPage";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Camera />
+      <ResultPage />
     </View>
   );
 }
