@@ -6,11 +6,17 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import Button from "./Button";
 
 export default function CameraPage() {
+  
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [permission, requestPermission] = useState(false);
+
+  // const to store image uri (used to display image)
   const [image, setImage] = useState(null);
+
+  // camera
   const cameraRef = useRef(null);
 
+  // ask permission and display camera
   useEffect(() => {
     (async () => {
       MediaLibrary.requestPermissionsAsync();
@@ -19,6 +25,7 @@ export default function CameraPage() {
     })();
   }, []);
 
+  // capture picture
   const takePicture = async () => {
     if (cameraRef) {
       try {
@@ -31,6 +38,7 @@ export default function CameraPage() {
     }
   };
 
+  // save image to local phone
   const saveImage = async ()  => {
     if (image){
       try{
@@ -43,34 +51,37 @@ export default function CameraPage() {
     }
   }
 
+  // if no persmission granted
   if (!permission) {
     return <Text>No access to camera</Text>;
   }
+
+  // if image taken, show image, else show camera
   return (
     <View style={styles.container}>
-      {!image ? (
-        <Camera style={styles.camera} type={type} ref={cameraRef}>
-          <Text>Hello</Text>
-        </Camera>
-      ) : (
-        <Image source={{uri: image}} style ={styles.camera}/>
-      )}
-      <View>
-        {image?
-        <View style={{
-          flexDirection: 'row',
-          justifyContent: "space-between",
-          paddingHorizontal: 50
-        }}>
-          <Button title={"Retake"} icon = "retweet" onPress={() => setImage(null)}/>
-          <Button title = {"Save"} icon = "check" onPress={saveImage}/>
-        </View>
+        {!image ? (
+          <Camera style={styles.camera} type={type} ref={cameraRef}>
+            <Text>Hello</Text>
+          </Camera>
+        ) : (
+          <Image source={{uri: image}} style ={styles.camera}/>
+        )}
 
-        :<Button title={"Take a picture"} icon="camera" onPress={takePicture} />
-        
-      }
-       
+      <View>
+        {image ?
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: "space-between",
+            paddingHorizontal: 50
+          }}>
+            <Button title={"Retake"} icon = "retweet" onPress={() => setImage(null)}/>
+            <Button title = {"Save"} icon = "check" onPress={saveImage}/>
+          </View>
+
+          : <Button title={"Take a picture"} icon="camera" onPress={takePicture} />     
+        }
       </View>
+
     </View>
   );
 }
