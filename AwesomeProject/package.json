@@ -18,7 +18,11 @@
     "react-native-vector-icons": "^10.0.0",
     "react-native-vision-camera": "^2.15.4",
     "expo-camera": "~13.2.1",
-    "expo-media-library": "~15.2.3"
+    "expo-media-library": "~15.2.3",
+    "react-native-web": "~0.18.10",
+    "react-dom": "18.2.0",
+    "@expo/webpack-config": "^18.0.1",
+    "expo-router": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

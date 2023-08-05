@@ -2,8 +2,29 @@ import { StatusBar } from "expo-status-bar";
 import { Camera, CameraType } from "expo-camera";
 import React, { useState, useEffect, useRef } from "react";
 import * as MediaLibrary from "expo-media-library";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
 import Button from "./Button";
+import {Link} from "expo-router";
+
+const { height, width } = Dimensions.get('window');
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#0f0",
+    height: width,
+    width: width,
+    paddingBottom: 40,
+  },
+  camera: {
+    flex: 1,
+    borderRadius: 20,
+    backgroundColor: '#0f0',
+    height: width,
+    width: width,
+    padding: 40
+
+  },
+});
 
 export default function CameraPage() {
   
@@ -16,12 +37,20 @@ export default function CameraPage() {
   // camera
   const cameraRef = useRef(null);
 
+  // the camera must be loaded in order to 
+  // access the supported ratios
+  const setCameraReady = async() => {
+    if (!isRatioSet) {
+      await prepareRatio();
+    }
+  };
   // ask permission and display camera
   useEffect(() => {
     (async () => {
       MediaLibrary.requestPermissionsAsync();
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
       requestPermission(cameraStatus.status === "granted");
+      
     })();
   }, []);
 
@@ -45,6 +74,8 @@ export default function CameraPage() {
         await MediaLibrary.createAssetAsync(image);
         alert('Picture saved!🐻🎉')
         setImage(null)
+        const asset = await MediaLibrary.createAssetAsync(image.uri);
+        console.log(image.height)
       } catch(e) {
         console.log(e)
       }
@@ -60,7 +91,7 @@ export default function CameraPage() {
   return (
     <View style={styles.container}>
         {!image ? (
-          <Camera style={styles.camera} type={type} ref={cameraRef}>
+          <Camera style={styles.camera} type={type} ref={cameraRef} ratio="1:1">
             <Text>Hello</Text>
           </Camera>
         ) : (
@@ -72,11 +103,15 @@ export default function CameraPage() {
           <View style={{
             flexDirection: 'row',
             justifyContent: "space-between",
-            paddingHorizontal: 50
+            paddingHorizontal: 50,
+            height: width,
+            width: width
           }}>
             <Button title={"Retake"} icon = "retweet" onPress={() => setImage(null)}/>
-            <Button title = {"Save"} icon = "check" onPress={saveImage}/>
-          </View>
+            <Link href="/History/resultPage">
+              <Button title = {"Save"} icon = "check" onPress={saveImage}/>
+            </Link>
+          </View >
 
           : <Button title={"Take a picture"} icon="camera" onPress={takePicture} />     
         }
@@ -86,15 +121,3 @@ export default function CameraPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-
-    paddingBottom: 40,
-  },
-  camera: {
-    flex: 1,
-    borderRadius: 20,
-  },
-});
