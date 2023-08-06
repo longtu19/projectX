@@ -2,9 +2,10 @@ import { StatusBar } from "expo-status-bar";
 import { Camera, CameraType } from "expo-camera";
 import React, { useState, useEffect, useRef } from "react";
 import * as MediaLibrary from "expo-media-library";
-import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Image, Dimensions, Pressable } from "react-native";
 import Button from "./Button";
 import {Link} from "expo-router";
+import { navigationRef, isReadyRef, navigate } from "../rootNavigation";
 
 const { height, width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -13,7 +14,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#0f0",
     height: width,
     width: width,
-    paddingBottom: 40,
   },
   camera: {
     flex: 1,
@@ -21,8 +21,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f0',
     height: width,
     width: width,
-    padding: 40
-
   },
 });
 
@@ -44,6 +42,13 @@ export default function CameraPage() {
       await prepareRatio();
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      isReadyRef.current = false
+    };
+  }, []);
+
   // ask permission and display camera
   useEffect(() => {
     (async () => {
@@ -59,10 +64,10 @@ export default function CameraPage() {
     if (cameraRef) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        console.log(data);
+        console.log("data: ", data);
         setImage(data.uri);
       } catch (e) {
-        console.log(e);
+        console.log("error taking picture: ", e);
       }
     }
   };
@@ -72,12 +77,13 @@ export default function CameraPage() {
     if (image){
       try{
         await MediaLibrary.createAssetAsync(image);
-        alert('Picture saved!🐻🎉')
         setImage(null)
-        const asset = await MediaLibrary.createAssetAsync(image.uri);
-        console.log(image.height)
+        alert('Picture saved!🐻🎉')
+        await MediaLibrary.saveToLibraryAsync(image)
+        console.log(image)
+        navigate('Result', {image})
       } catch(e) {
-        console.log(e)
+        console.log("error saving image: ", e)
       }
     }
   }
@@ -92,7 +98,6 @@ export default function CameraPage() {
     <View style={styles.container}>
         {!image ? (
           <Camera style={styles.camera} type={type} ref={cameraRef} ratio="1:1">
-            <Text>Hello</Text>
           </Camera>
         ) : (
           <Image source={{uri: image}} style ={styles.camera}/>
@@ -103,14 +108,12 @@ export default function CameraPage() {
           <View style={{
             flexDirection: 'row',
             justifyContent: "space-between",
-            paddingHorizontal: 50,
             height: width,
             width: width
           }}>
             <Button title={"Retake"} icon = "retweet" onPress={() => setImage(null)}/>
-            <Link href="/History/resultPage">
-              <Button title = {"Save"} icon = "check" onPress={saveImage}/>
-            </Link>
+            <Button title={"Proceed"} icon = "camera" onPress={() => saveImage(image)}/>
+
           </View >
 
           : <Button title={"Take a picture"} icon="camera" onPress={takePicture} />     

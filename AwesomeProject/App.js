@@ -8,12 +8,20 @@ import {
 } from "react-native";
 import CameraPage from "./source/CameraPage/cameraPage";
 import ResultPage from "./source/History/resultPage";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { navigationRef, isReadyRef } from './source/rootNavigation';
+
+const RootStack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <CameraPage />
-    </View>
+    <NavigationContainer ref={navigationRef}>
+      <RootStack.Navigator>
+        <RootStack.Screen name="Camera" component={CameraPage} />
+        <RootStack.Screen name="Result" component={ResultPage} />
+      </RootStack.Navigator>
+    </NavigationContainer>
   );
 }
 

@@ -8,13 +8,16 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   Alert,
+  Image,
+  Dimensions
 } from "react-native";
 import items from "./data.js";
 import { Avatar, Button, Card } from "react-native-paper";
 
-export default function ResultPage() {
-  const [itemsSelected, setItemsSelected] = useState({});
+const { height, width } = Dimensions.get('window');
 
+export default function ResultPage(image) {
+  const [itemsSelected, setItemsSelected] = useState({});
   const handlePressSellers = (itemId) => {
     setItemsSelected((prevItems) => ({
       ...prevItems,
@@ -26,6 +29,7 @@ export default function ResultPage() {
     <View>
       <Card style={styles.item_card}>
         <Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+          <Button onPress={() => handlePressSellers(item.id)}>Sellers</Button>
         <Card.Actions>
           <Button onPress={() => handlePressSellers(item.id)}>Sellers</Button>
         </Card.Actions>
@@ -46,7 +50,10 @@ export default function ResultPage() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>History</Text>
-      <View style={{ height: 660, top: 100 }}>
+      <View style ={styles.camera}>
+        <Image source={{uri: image.route.params.image}} style ={styles.camera}/>
+      </View>
+      <View style={{ height: height - width, top: 100 }}>
         <FlatList
           data={items}
           renderItem={renderItem}
@@ -82,7 +89,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: 0.2,
     color: "black",
-    position: "fixed",
+    position: "absolute",
     padding: 12,
     borderRadius: 20,
     overflow: "hidden",
@@ -99,5 +106,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontSize: 20,
     borderColor: "black",
+  },
+  camera: {
+    flex: 1,
+    height: width,
+    width: width,
+    padding: 10,
+    zIndex: 0
   },
 });
